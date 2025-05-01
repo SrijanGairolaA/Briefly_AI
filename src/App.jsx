@@ -1,0 +1,416 @@
+import React, { useEffect, useRef, useState } from 'react'
+import axios from 'axios'
+import Card from './components/Card'
+import { useSelector } from 'react-redux';
+
+
+
+
+
+const App = () => {
+  const [news, setNews] = useState([
+    {
+      "source": {
+        "id": "cnn",
+        "name": "CNN"
+      },
+      "author": "Kara Fox, Jessie Yeung",
+      "title": "At least 26 people killed as gunmen open fire on tourists in Kashmir beauty spot - CNN",
+      "description": "At least 26 people were killed and a dozen injured in a suspected terror attack in the disputed Himalayan region of Jammu and Kashmir on Tuesday, a rare assault on tourists in a region fraught by decades of insurgency and opposition to India’s rule.",
+      "url": "https://www.cnn.com/2025/04/22/asia/gunmen-open-fire-jammu-kashmir-intl/index.html",
+      "urlToImage": "https://media.cnn.com/api/v1/images/stellar/prod/ap25112448508238.jpg?c=16x9&q=w_800,c_fill",
+      "publishedAt": "2025-04-23T05:34:00Z",
+      "content": "Gunmen killed at least 26 people and injured a dozen others in the disputed Himalayan region of Jammu and Kashmir on Tuesday, a rare assault on tourists in an area fraught by decades of insurgency an… [+7601 chars]"
+    },
+    {
+      "source": {
+        "id": "cnn",
+        "name": "CNN"
+      },
+      "author": "Associated Press",
+      "title": "The Texas Lottery’s top executive resigns as scrutiny over big jackpot winners intensifies - CNN",
+      "description": "The executive director of the Texas Lottery Commission has resigned, the latest shake-up at the state’s retail gambling enterprise amid multiple investigations into jackpots in 2023 and earlier this year totaling nearly $200 million, and calls from some lawma…",
+      "url": "https://www.cnn.com/2025/04/23/us/texas-lottery-ryan-mindell-resignation/index.html",
+      "urlToImage": "https://media.cnn.com/api/v1/images/stellar/prod/ap25112653078701.jpg?c=16x9&q=w_800,c_fill",
+      "publishedAt": "2025-04-23T05:09:00Z",
+      "content": "The executive director of the Texas Lottery Commission has resigned, the latest shake-up at the states retail gambling enterprise amid multiple investigations into jackpots in 2023 and earlier this y… [+4526 chars]"
+    },
+    {
+      "source": {
+        "id": "espn",
+        "name": "ESPN"
+      },
+      "author": "ESPN",
+      "title": "Lakers 94-85 Timberwolves (Apr 22, 2025) Game Recap - ESPN",
+      "description": null,
+      "url": "https://www.espn.com/nba/recap?gameId\\\\u003d401767915",
+      "urlToImage": null,
+      "publishedAt": "2025-04-23T04:48:09Z",
+      "content": null
+    },
+    {
+      "source": {
+        "id": "the-washington-post",
+        "name": "The Washington Post"
+      },
+      "author": "Trisha Thadani",
+      "title": "Musk says he will step back from DOGE, refocus on Tesla after earnings plunge - The Washington Post",
+      "description": "Tesla announced quarterly earnings down 71 percent from a year earlier, amid tariff threats and protests over CEO Elon Musk’s role in pushing government cuts.",
+      "url": "https://www.washingtonpost.com/technology/2025/04/22/tesla-earnings-elon-musk-politics-stock/",
+      "urlToImage": "https://www.washingtonpost.com/wp-apps/imrs.php?src=https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/7OATTLKX5K7M4ZMRVXTNWNAPQY_size-normalized.jpg&w=1440",
+      "publishedAt": "2025-04-23T04:06:01Z",
+      "content": "Billionaire Elon Musk said he will step back from the U.S. DOGE Service next month and focus on Tesla, his reeling electric vehicle company, which on Tuesday reported a stunning 71 percent plunge in … [+5090 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "Pitchfork"
+      },
+      "author": "Walden Green",
+      "title": "Lorde Debuts New Song “What Was That” Live at Washington Square Park: Watch - Pitchfork",
+      "description": "The singer gave an impromptu performance of the forthcoming single after her originally planned appearance was shut down by local police",
+      "url": "https://pitchfork.com/news/lorde-debuts-new-song-what-was-that-live-at-washington-square-park-watch/",
+      "urlToImage": "https://media.pitchfork.com/photos/6808608764c0a04ac37e5f7d/16:9/w_1280,c_limit/Lorde.jpeg",
+      "publishedAt": "2025-04-23T03:48:34Z",
+      "content": "Lorde debuted her forthcoming single What Was That this evening (Tuesday, April 22) at New Yorks Washington Square Park. The singer stood on a wooden platform at the center of the parks now-dormant f… [+1665 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "CBS Sports"
+      },
+      "author": null,
+      "title": "Milwaukee Bucks vs. Indiana Pacers Live Score and Stats - April 22, 2025 Gametracker - CBS Sports",
+      "description": "Get real-time NBA Basketball coverage and scores as Milwaukee Bucks takes on Indiana Pacers. We bring you the latest game previews, live stats, expert picks and recaps on CBSSports.com",
+      "url": "https://www.cbssports.com/nba/gametracker/recap/NBA_20250422_MIL@IND/",
+      "urlToImage": "https://sportsfly.cbsistatic.com/fly-0945/bundles/sportsmediacss/images/fantasy/default-article-image-large.png",
+      "publishedAt": "2025-04-23T03:11:15Z",
+      "content": "INDIANAPOLIS (AP) Pascal Siakam and Tyrese Haliburton played the perfect pair for the Indiana Pacers on Tuesday. Again.\r\nNow they're two wins away from ousting the Milwaukee Bucks in the first round … [+2847 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "Ultimate Classic Rock"
+      },
+      "author": "mwilkening",
+      "title": "Carlos Santana Hospitalized After Collapsing at Soundcheck - Ultimate Classic Rock",
+      "description": "Carlos Santana was hospitalized after collapsing during a soundcheck before an April 22, 2025 show in San Antonio.",
+      "url": "https://ultimateclassicrock.com/santana-hospitalized-2025/",
+      "urlToImage": "https://townsquare.media/site/295/files/2022/07/attachment-carlos-santana-2020-alberto-e-rodriguez-getty-images-for-the-recording-academy-rs.jpg?w=1200&q=75&format=natural",
+      "publishedAt": "2025-04-23T02:27:18Z",
+      "content": "Carlos Santana has been hospitalized with what the San Antonio Fire Department reportedly described as \"a non life-threatening condition\" prior to his band's scheduled show tonight (April 22) in San … [+1433 chars]"
+    },
+    {
+      "source": {
+        "id": "usa-today",
+        "name": "USA Today"
+      },
+      "author": "Edward Segarra",
+      "title": "Sophie Nyweide, 'Mammoth' and 'An Invisible Sign' child star, dies at 24: Reports - USA Today",
+      "description": "Former child star Sophie Nyweide, best known for her roles in the films \"Mammoth\" and \"An Invisible Sign,\" reportedly died on April 14.",
+      "url": "https://www.usatoday.com/story/entertainment/celebrities/2025/04/22/sophie-nyweide-dead-child-star/83218744007/",
+      "urlToImage": "https://www.usatoday.com/gcdn/authoring/authoring-images/2025/04/22/USAT/83218756007-84690616.jpg?crop=2999,1687,x0,y144&width=2999&height=1687&format=pjpg&auto=webp",
+      "publishedAt": "2025-04-23T00:48:08Z",
+      "content": "Actress and former child starSophie Nyweide, best known for her roles in the films \"Mammoth\" and \"An Invisible Sign,\" has died, according to reports. She was 24.\r\nNyweide died April 14, according to … [+3839 chars]"
+    },
+    {
+      "source": {
+        "id": "cnn",
+        "name": "CNN"
+      },
+      "author": "Kaitlan Collins, Natasha Bertrand, Jake Tapper, Kevin Liptak",
+      "title": "Trump unlikely to dismiss Hegseth, but officials are troubled by disarray in Pentagon chief’s inner circle - CNN",
+      "description": "A defiant Defense Secretary Pete Hegseth booked himself on the television network where he used to work as a host Tuesday morning in a bid to address the fallout over revelations that he discussed military plans in a second Signal group chat, this time with h…",
+      "url": "https://www.cnn.com/2025/04/22/politics/hegseth-trump-pentagon-disarray/index.html",
+      "urlToImage": "https://media.cnn.com/api/v1/images/stellar/prod/2025-04-22t183856z-578974492-rc263ea5a134-rtrmadp-3-usa-trump-justice-religion.JPG?c=16x9&q=w_800,c_fill",
+      "publishedAt": "2025-04-23T00:47:00Z",
+      "content": "A defiant Defense Secretary Pete Hegseth booked himself on the television network where he used to work as a host Tuesday morning in a bid to address the fallout over revelations that he discussed mi… [+7958 chars]"
+    },
+    {
+      "source": {
+        "id": "the-washington-post",
+        "name": "The Washington Post"
+      },
+      "author": "Kim Bellware",
+      "title": "Whooping cough cases surge as vaccine rates fall - The Washington Post",
+      "description": "The U.S. has tallied 8,077 cases of whooping cough in 2025, compared with 3,847 cases in the same period last year, federal data shows.",
+      "url": "https://www.washingtonpost.com/health/2025/04/22/whooping-cough-pertussis-cases-rise/",
+      "urlToImage": "https://www.washingtonpost.com/wp-apps/imrs.php?src=https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/J4L3Q7AD2EI63C7LFNHEQGYVAA.jpg&w=1440",
+      "publishedAt": "2025-04-23T00:44:30Z",
+      "content": "Whooping cough cases are soaring in the United States, according to new data from the Centers for Disease Control and Prevention, as the Trump administrations cuts to federal health agencies and fund… [+5584 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "CNBC"
+      },
+      "author": "Brian Evans",
+      "title": "Dow futures jump 400 points after Trump says he doesn’t plan to get rid of Fed chief: Live updates - CNBC",
+      "description": "The 30-stock Dow jumped more than 1,100 points at its peak on Tuesday.",
+      "url": "https://www.cnbc.com/2025/04/22/stock-market-today-live-updates.html",
+      "urlToImage": "https://image.cnbcfm.com/api/v1/image/108111274-1741186847052-gettyimages-2202853472-AFP_36ZD6LX.jpeg?v=1741895939&w=1920&h=1080",
+      "publishedAt": "2025-04-23T00:34:00Z",
+      "content": "Stock futures climbed on Tuesday evening after President Donald Trump said he doesn't plan to remove Federal Reserve Chairman Jerome Powell from his post as central bank leader.\r\nDow Jones Industrial… [+2027 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "KOMO News"
+      },
+      "author": "KOMO News Staff",
+      "title": "Infant measles case confirmed in King County; 5th in Washington this year - KOMO",
+      "description": "Public Health – Seattle & King County confirmed another positive measles case in King County Friday, marking Washington's fifth measles case of the year.",
+      "url": "https://komonews.com/news/local/infant-measles-case-confirmed-king-county-fifth-washington-another-measles-case-confirmed-king-county-exposed-disease-infection-vaccine-vaccination-vaxx-immunity-herd-children-baby-toddler-sick-doctor-hospital-pediatrician-outbreak-pandemic",
+      "urlToImage": "https://komonews.com/resources/media/3d900986-0044-4cf0-9f10-7d5cab3c40dc-large16x9_3962bf301aed4743bc9e1ad6e81b0961large16x9_measles.jpg",
+      "publishedAt": "2025-04-22T23:48:24Z",
+      "content": "KING COUNTY, Wash. Public HealthSeattle &amp; King County confirmed another positive measles case in King County on Friday, marking Washington's fifth measles case of the year.\r\nPublic health said th… [+3230 chars]"
+    },
+    {
+      "source": {
+        "id": "fortune",
+        "name": "Fortune"
+      },
+      "author": "Amanda Gerut",
+      "title": "Elon Musk claims Tesla demonstrators are funded by same waste he is fighting with DOGE - Fortune",
+      "description": "Musk offered no evidence for his claims but described the protests as “natural blowback” on Tesla from those on the receiving end of the fraud.",
+      "url": "https://fortune.com/article/elon-musk-claims-tesla-protests-funded-waste-fraud-doge/",
+      "urlToImage": "https://fortune.com/img-assets/wp-content/uploads/2025/04/GettyImages-2206215300-e1745364425491.jpg?resize=1200,600",
+      "publishedAt": "2025-04-22T23:32:00Z",
+      "content": null
+    },
+    {
+      "source": {
+        "id": "associated-press",
+        "name": "Associated Press"
+      },
+      "author": "Jacques Billeaud",
+      "title": "Lori Vallow Daybell convicted in Arizona of conspiring to kill her estranged husband in 2019 - AP News",
+      "description": "An Arizona jury has found Lori Vallow Daybell guilty of conspiring to murder her estranged husband. That means the mother with doomsday religious beliefs faces another life sentence after she was already convicted in Idaho in the killings of her two youngest …",
+      "url": "https://apnews.com/article/lori-vallow-daybell-trial-arizona-husband-e90b5f33e33aad5788e107d652c48900",
+      "urlToImage": "https://dims.apnews.com/dims4/default/56bd413/2147483647/strip/true/crop/5472x3078+0+285/resize/1440x810!/quality/90/?url=https%3A%2F%2Fassets.apnews.com%2Fd2%2F13%2F364cef19c65b7c6ed3eb98d9ab59%2Fb06bd7c3db2f4589a1ad8e84a733f578",
+      "publishedAt": "2025-04-22T22:55:00Z",
+      "content": "PHOENIX (AP) An Arizona jury has found Lori Vallow Daybell guilty of conspiring to murder her estranged husband, meaning the mother with doomsday religious beliefs faces another life sentence after s… [+3112 chars]"
+    },
+    {
+      "source": {
+        "id": "nfl-news",
+        "name": "NFL News"
+      },
+      "author": null,
+      "title": "2025 NFL Draft: Pro execs, scouts, coaches rank and evaluate the top 18 prospects in this QB class - NFL.com",
+      "description": "The 2025 NFL Draft's quarterback class has been analyzed by draftniks for months, but what do the actual teams think of this crop? Tom Pelissero reveals QB prospect rankings and evaluations based on dozens of conversations with league executives, scouts a",
+      "url": "https://www.nfl.com/news/2025-nfl-draft-pro-execs-scouts-coaches-rank-and-evaluate-the-top-18-prospects-in-this-qb-class",
+      "urlToImage": "https://static.www.nfl.com/image/upload/t_editorial_landscape_12_desktop/league/eakdzn8igwxgncmwlkao",
+      "publishedAt": "2025-04-22T22:20:00Z",
+      "content": null
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "Catholicnewsagency.com"
+      },
+      "author": "Kate Quiñones",
+      "title": "General congregation begins: Cardinals suspend beatifications, swear to secrecy - Catholic News Agency",
+      "description": "At the first general congregation of cardinals in Rome on Tuesday, the estimated 60 cardinals in attendance chose the date of Pope Francis’ funeral.",
+      "url": "https://www.catholicnewsagency.com/news/263573/general-congregation-begins-cardinals-suspend-beatifications-swear-to-secrecy",
+      "urlToImage": "https://www.catholicnewsagency.com/images/250413-palm-sunday-benedicte-cedergren-38.jpg?jpg",
+      "publishedAt": "2025-04-22T22:17:00Z",
+      "content": "CNA Staff, Apr 22, 2025 /\r\n 18:17 pm\r\nAt the first general congregation of cardinals in Rome on Tuesday, the estimated 60 cardinals in attendance chose the date of Pope Francis funeral and suspended … [+2409 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "WBUR"
+      },
+      "author": null,
+      "title": "170+ colleges and universities call for 'constructive engagement' with Trump administration - WBUR",
+      "description": "The public letter calls for academic freedom and constructive engagement with the Trump administration as the White House takes on Harvard University.",
+      "url": "https://www.wbur.org/hereandnow/2025/04/22/colleges-trump-letter",
+      "urlToImage": "https://wordpress.wbur.org/wp-content/uploads/2025/04/AP25112413485551-1000x654.jpg",
+      "publishedAt": "2025-04-22T21:45:00Z",
+      "content": "The head of the American Association of Colleges &amp; Universities said higher education institutions want to engage with the Trump administration on reforms that dont undermine their mission and pu… [+3114 chars]"
+    },
+    {
+      "source": {
+        "id": "ign",
+        "name": "IGN"
+      },
+      "author": "Rebekah Valentine",
+      "title": "Bethesda Gifts The Elder Scrolls IV: Oblivion Remastered Keys to Entire Skyblivion Modding Team - IGN",
+      "description": "The Elder Scrolls fans are praising Bethesda today after the developer gifted free game keys for The Elder Scrolls IV: Oblivion Remastered to the entire team behind popular Oblivion mod, Skyblivion.",
+      "url": "https://www.ign.com/articles/bethesda-gifts-the-elder-scrolls-iv-oblivion-remastered-keys-to-entire-skyblivion-modding-team",
+      "urlToImage": "https://assets-prd.ignimgs.com/2025/04/22/skyblivion-1745357949354.jpg?width=1280",
+      "publishedAt": "2025-04-22T21:39:12Z",
+      "content": "The Elder Scrolls fans are praising Bethesda today after the developer gifted free game keys for The Elder Scrolls IV: Oblivion Remastered to the entire team behind popular Oblivion mod, Skyblivion.\r… [+2767 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "POLITICO.eu"
+      },
+      "author": "Veronika Melkozerova",
+      "title": "Ukraine ready to negotiate with Russia — if it agrees to ceasefire first - politico.eu",
+      "description": "The change of tone came the day before Ukrainian officials were to meet U.S. representatives in London to discuss a ceasefire plan, with Putin also reportedly open to a deal.",
+      "url": "https://www.politico.eu/article/zelenskyy-full-ceasefire-first-and-then-well-talk/",
+      "urlToImage": "https://www.politico.eu/cdn-cgi/image/width=1200,height=630,fit=crop,quality=80,onerror=redirect/wp-content/uploads/2025/04/22/12946072-scaled.jpg",
+      "publishedAt": "2025-04-22T20:29:00Z",
+      "content": "Russian President Vladimir Putin also expressed readiness on Tuesday to engage in a direct dialogue with Ukraine, considering Zelenskyys proposal to halt strikes on civilian infrastructure.  \r\nThe FT… [+1264 chars]"
+    }
+  ])
+  const [summary, setSummary] = useState("No summary")
+  const [showSummary, setShowSummary] = useState(false)
+  
+  const apiKey = import.meta.env.VITE_NEWS_API_KEY
+  const llmKey = import.meta.env.VITE_MY_LLM
+
+  const scrollref = useRef(null)
+
+  const scrollLeft = () =>{
+    const amount = window.innerWidth>=1200 ? -1200: -392;
+    scrollref.current.scrollBy({left: amount, behavior: 'smooth'})
+  }
+
+  const scrollRight = () =>{
+    const amount = window.innerWidth>=1200? 1200: 392;
+    scrollref.current.scrollBy({left: amount, behavior: 'smooth'})
+  }
+
+  const content = useSelector(state => state.search.content)
+
+
+
+
+  useEffect(()=>{
+
+    const fetchNews = async () => {
+      try {
+        const response = await axios.get(`https://newsapi.org/v2/everything?q=${content}&apiKey=${apiKey}`);
+        const news = response.data.articles;
+        setNews(news);
+        console.log("data fetched");
+        console.log(content)
+      } catch (error) {
+        console.log("Error in fetching news: ", error);
+      }
+    };
+
+    
+
+    fetchNews()
+    
+
+
+    
+  },[content])
+
+  useEffect(()=>{
+
+  },[])
+
+  const generateSummary = async (content) => {
+    try {
+      console.log("loading....");
+      const response = await axios({
+        url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${llmKey}`,
+        method: "post",
+        data: {
+          contents: [
+            {
+              parts: [
+                {
+                  text: `First analyze this news content and generate summary points. Do not use asterisks (*) or your own words. Use numbered or dotted bullet points only:\n\n${content}`
+                }
+              ]
+            }
+          ]
+        }
+      });
+  
+      const summaryText = response.data.candidates[0].content.parts[0].text;
+      setSummary(summaryText);
+    } catch (error) {
+      console.log("Error in generating summary: ", error);
+    }
+  };
+  
+
+  console.log(news)
+
+let i = Math.floor(Math.random()*(news.length-5))
+
+
+
+
+  return (
+    <>
+    
+
+    
+
+    <div className={`transition-all duration-500 ease-in-out  bg-teal-500 border-l border-t border-b border-white   fixed h-[500px] z-60 w-[350px]  top-40 sm:top-18 ${showSummary ? 'right-0' : '-right-[349px]'}`}>
+      <div  onClick={() => {
+  console.log("Toggling Summary:", !showSummary);
+  setShowSummary(!showSummary);
+}} className='bg-teal-500 text-white border-l border-t border-b border-white h-10 w-10 relative text-3xl pl-1 z-10 rounded-l right-10 top-4  '><i class="ri-openai-fill"></i></div>
+      <div className='text-white font-semibold h-10 relative text-3xl bottom-7 z-2 pl-26 pt-1.5'>Summary</div>
+      <div className='bg-white text-slate-900 text-xl border border-white rounded-lg pl-2 pt-2 w-[320px] relative left-4 h-[400px] overflow-y-auto'>{summary.split('\n').map((line, index) => (
+    line.trim() && <div key={index} className="mb-2"> {line.trim()}</div>
+  ))}</div>
+    </div>
+
+    <div  ref={scrollref} className='  mt-14 sm:mt-10 sm:ml-40 bg-blue-700 w-full   sm:w-[1200px] sm:h-[600px] h-[400px]  overflow-x-auto '   >
+
+
+        <button
+          onClick={scrollLeft}
+          className="absolute left-2 sm:left-42 top-80 sm:top-100 -translate-y-1/2 z-50 text-white bg-red-00 active:bg-gray-300 bg-opacity-50 p-3 rounded-full hover:scale-110 transition"
+        >
+          <i className="ri-arrow-left-s-line text-2xl"></i>
+        </button>
+        <button
+          onClick={scrollRight}
+          className="absolute right-2 sm:right-44 top-80 -translate-y-1/2 z-50 sm:top-100 text-white bg-red-00 active:bg-gray-300 bg-opacity-50 p-3 rounded-full hover:scale-110 transition"
+        >
+          <i className="ri-arrow-right-s-line text-2xl"></i>
+        </button>
+
+
+    <div className="flex w-max">
+   {news.slice(0,8).map((item, index)=>(
+     <div key={index} className="bg-red-600 w-[392px] h-[400px] sm:h-[600px] sm:w-[1200px] flex-shrink-0 relative">
+      <div className='bg-teal-500 text-white w-10 pl-1 rounded-lg absolute top-6 right-5 text-3xl'> <button onClick={()=> {generateSummary(item.content)
+        showSummary? setShowSummary(true) : setShowSummary(!showSummary)}} className='bg-red-00'><i class="ri-openai-fill"/></button></div>
+     {item.urlToImage ? (
+       <img src={item.urlToImage} alt={`News ${index}`} className="object-cover w-full h-full" />
+     ) : (
+       <span className="text-white p-4">No image</span>
+     )}
+     <div className="bg-red-00 text-xl sm:text-2xl relative bottom-32 p-2 sm:pl-5 text-white font-semibold">
+       {item.title || 'No Title'}
+     </div>
+   </div>
+  ))}
+
+    </div>
+    </div>
+
+    <div className='mt-3 sm:mt-5'>
+     <div className='bg-white w-[180px] sm:w-[260px] relative top-3 sm:top-4 left-6 sm:left-20  text-2xl sm:text-4xl'> TOP HEADLINES</div>
+     <div className='h-1 w-full border-t'></div>
+    </div>
+
+    <div className=' grid grid-cols-12  gap-3  mt-6 sm:pl-5 sm:pr-5'>
+      <Card 
+       news={news}  
+       generateSummary={generateSummary} 
+       setShowSummary={setShowSummary}/>
+     
+    
+
+    </div>
+     
+    </>
+  )
+}
+
+export default App
