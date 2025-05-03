@@ -260,7 +260,7 @@ const App = () => {
   const [summary, setSummary] = useState("No summary")
   const [showSummary, setShowSummary] = useState(false)
   
-  const apiKey = import.meta.env.VITE_NEWS_API_KEY
+  // const apiKey = import.meta.env.VITE_NEWS_API_KEY
   const llmKey = import.meta.env.VITE_MY_LLM
 
   const scrollref = useRef(null)
@@ -275,37 +275,59 @@ const App = () => {
     scrollref.current.scrollBy({left: amount, behavior: 'smooth'})
   }
 
-  const content = useSelector(state => state.search.content)
+  const query = useSelector(state => state.search.content)
 
 
-
-
-  useEffect(()=>{
-
-    const fetchNews = async () => {
-      try {
-        const response = await axios.get(`https://newsapi.org/v2/everything?q=${content}&apiKey=${apiKey}`);
-        const news = response.data.articles;
-        setNews(news);
-        console.log("data fetched");
-        console.log(content)
-      } catch (error) {
-        console.log("Error in fetching news: ", error);
-      }
+  const fetchNews = async(query)=>{
+    if(!query){
+      console.log("error cant get query")
     };
-
     
+    try {
+      const response = await axios.get(`http://localhost:5000/news/${query}`)
+      
+      console.log("Response: ", response);
 
-    fetchNews()
-    
-
-
-    
-  },[content])
+      if(response){
+        setNews(response.data);
+      }
+      else{
+        console.log("Error response is not coming")
+      }
+      
+    } catch (error) {
+      console.log("Error in fetching news: ", error);
+    }
+  }
 
   useEffect(()=>{
+    fetchNews(query)
+  },[query])
 
-  },[])
+  // useEffect(()=>{
+
+  //   const fetchNews = async () => {
+  //     try {
+  //       const response = await axios.get(`https://newsapi.org/v2/everything?q=${content}&apiKey=${apiKey}`);
+  //       const news = response.data.articles;
+  //       setNews(news);
+  //       console.log("data fetched");
+  //       console.log(content)
+  //     } catch (error) {
+  //       console.log("Error in fetching news: ", error);
+  //     }
+  //   };
+
+    
+
+  //   fetchNews()
+    
+
+
+    
+  // },[content])
+
+  
 
   const generateSummary = async (content) => {
     try {
@@ -336,7 +358,7 @@ const App = () => {
 
   console.log(news)
 
-let i = Math.floor(Math.random()*(news.length-5))
+
 
 
 
