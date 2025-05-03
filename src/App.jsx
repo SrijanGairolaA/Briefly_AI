@@ -284,7 +284,7 @@ const App = () => {
     };
     
     try {
-      const response = await axios.get(`http://localhost:5000/news/${query}`)
+      const response = await axios.get(`https://brieflyai-emkz.onrender.com/news/${query}`)
       
       console.log("Response: ", response);
 
